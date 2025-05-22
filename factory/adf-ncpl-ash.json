@@ -1,0 +1,9 @@
+{
+	"name": "adf-ncpl-ash",
+	"location": "canadacentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d2dda21b-5562-462d-a275-73663e81d7b6",
+		"tenantId": "add2440d-6d12-4f2f-8842-22b3efa23df6"
+	}
+}

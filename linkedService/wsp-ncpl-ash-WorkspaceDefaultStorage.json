@@ -1,0 +1,15 @@
+{
+	"name": "wsp-ncpl-ash-WorkspaceDefaultStorage",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"typeProperties": {
+			"url": "https://adlsgen2ash.dfs.core.windows.net"
+		},
+		"type": "AzureBlobFS",
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,449 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "accounts"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "customers"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loanpayments"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loans"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "transactions"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "accountssink",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "customerssink",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loanpaymentssink",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "loanssink",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					},
+					"name": "transactionsink",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureDataLakeStoragesink",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "rename1"
+				},
+				{
+					"name": "accountsfilter"
+				},
+				{
+					"name": "removeduplicatesaccounts"
+				},
+				{
+					"name": "rename2"
+				},
+				{
+					"name": "customersfilter"
+				},
+				{
+					"name": "removeduplicatescustomer"
+				},
+				{
+					"name": "loanpaymentfilter"
+				},
+				{
+					"name": "rename3"
+				},
+				{
+					"name": "removeduplicatesloanpayments"
+				},
+				{
+					"name": "rename4"
+				},
+				{
+					"name": "loansfilter"
+				},
+				{
+					"name": "removeduplicatesloans"
+				},
+				{
+					"name": "rename5"
+				},
+				{
+					"name": "transactionsfilter"
+				},
+				{
+					"name": "removeduplicatestranscations"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          account_id as short,",
+				"          customer_id as short,",
+				"          account_type as string,",
+				"          balance as double",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/BRONZE',",
+				"     fileName: 'accounts.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> accounts",
+				"source(output(",
+				"          customer_id as short,",
+				"          first_name as string,",
+				"          last_name as string,",
+				"          address as string,",
+				"          city as string,",
+				"          state as string,",
+				"          zip as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/BRONZE',",
+				"     fileName: 'customers.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> customers",
+				"source(output(",
+				"          payment_id as short,",
+				"          loan_id as short,",
+				"          payment_date as date,",
+				"          payment_amount as double",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/BRONZE',",
+				"     fileName: 'loan_payments.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> loanpayments",
+				"source(output(",
+				"          loan_id as short,",
+				"          customer_id as short,",
+				"          loan_amount as double,",
+				"          interest_rate as double,",
+				"          loan_term as short",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/BRONZE',",
+				"     fileName: 'loans.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> loans",
+				"source(output(",
+				"          transaction_id as short,",
+				"          account_id as short,",
+				"          transaction_date as date,",
+				"          transaction_amount as double,",
+				"          transaction_type as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/BRONZE',",
+				"     fileName: 'transactions.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> transactions",
+				"accounts select(mapColumn(",
+				"          accountid = account_id,",
+				"          customerid = customer_id,",
+				"          accounttype = account_type,",
+				"          balance",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename1",
+				"rename1 filter(!isNull(accountid) || toString(accountid) != '' ||",
+				"!isNull(customerid) || toString(customerid) != '' ||",
+				"(accounttype == 'Savings' || accounttype == 'Checking') &&",
+				"!isNull(balance) || balance >= 0) ~> accountsfilter",
+				"accountsfilter aggregate(groupBy(accountid,",
+				"          customerid),",
+				"     accounttype = first(accounttype),",
+				"          balance = first(balance)) ~> removeduplicatesaccounts",
+				"customers select(mapColumn(",
+				"          customerid = customer_id,",
+				"          firstname = first_name,",
+				"          lastname = last_name,",
+				"          address,",
+				"          city,",
+				"          state,",
+				"          zip",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename2",
+				"rename2 filter(!isNull(customerid) && toString(customerid) != '' &&",
+				"!isNull(firstname) && firstname != '' &&",
+				"!isNull(lastname) && lastname != '' &&",
+				"!isNull(state) && state != '' &&",
+				"!isNull(zip) && zip != '') ~> customersfilter",
+				"customersfilter aggregate(groupBy(customerid),",
+				"     firstname = first(firstname),",
+				"          lastname = first(lastname),",
+				"          address = first(address),",
+				"          city = first(city),",
+				"          state = first(state),",
+				"          zip = first(zip)) ~> removeduplicatescustomer",
+				"rename3 filter(!isNull(paymentid) && toString(paymentid) != '' &&",
+				"!isNull(loanid) && toString(loanid) != '' &&",
+				"!isNull(paymentdate) &&",
+				"!isNull(paymentamount) && paymentamount > 0) ~> loanpaymentfilter",
+				"loanpayments select(mapColumn(",
+				"          paymentid = payment_id,",
+				"          loanid = loan_id,",
+				"          paymentdate = payment_date,",
+				"          paymentamount = payment_amount",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename3",
+				"loanpaymentfilter aggregate(groupBy(paymentid,",
+				"          loanid),",
+				"     paymentdate = first(paymentdate),",
+				"          paymentamount = first(paymentamount)) ~> removeduplicatesloanpayments",
+				"loans select(mapColumn(",
+				"          loanid = loan_id,",
+				"          customerid = customer_id,",
+				"          loanamount = loan_amount,",
+				"          interestrate = interest_rate,",
+				"          loanterm = loan_term",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename4",
+				"rename4 filter(!isNull(loanid) && toString(loanid) != '' &&",
+				"!isNull(customerid) && toString(customerid) != '' &&",
+				"!isNull(loanamount) && loanamount > 0 &&",
+				"!isNull(interestrate) && interestrate > 0 &&",
+				"!isNull(loanterm) && loanterm > 0) ~> loansfilter",
+				"loansfilter aggregate(groupBy(loanid,",
+				"          customerid),",
+				"     loanamount = first(loanamount),",
+				"          interestrate = first(interestrate),",
+				"          loanterm = first(loanterm)) ~> removeduplicatesloans",
+				"transactions select(mapColumn(",
+				"          transactionid = transaction_id,",
+				"          accountid = account_id,",
+				"          transactiondate = transaction_date,",
+				"          transactionamount = transaction_amount,",
+				"          transactiontype = transaction_type",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename5",
+				"rename5 filter(!isNull(transactionid) && toString(transactionid) != '' &&",
+				"!isNull(accountid) && toString(accountid) != '' &&",
+				"!isNull(transactiondate) &&",
+				"!isNull(transactionamount) && transactionamount > 0 &&",
+				"(transactiontype == 'Deposit' || transactiontype == 'Withdrawal')) ~> transactionsfilter",
+				"transactionsfilter aggregate(groupBy(transactionid,",
+				"          accountid),",
+				"     transactiondate = first(transactiondate),",
+				"          transactionamount = first(transactionamount),",
+				"          transactiontype = first(transactiontype)) ~> removeduplicatestranscations",
+				"removeduplicatescustomer derive(state = iif(isNull(state),'unknown',state),",
+				"          zip = iif(isNull(zip),'unknown',zip)) ~> derivedColumn1",
+				"removeduplicatesaccounts sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          accountid,",
+				"          customerid,",
+				"          accounttype,",
+				"          balance",
+				"     )) ~> accountssink",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          customer_id = customerid,",
+				"          first_name = firstname,",
+				"          last_name = lastname,",
+				"          address,",
+				"          city,",
+				"          state,",
+				"          zip",
+				"     )) ~> customerssink",
+				"removeduplicatesloanpayments sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          paymentid,",
+				"          loanid,",
+				"          paymentdate,",
+				"          paymentamount",
+				"     )) ~> loanpaymentssink",
+				"removeduplicatesloans sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          loanid,",
+				"          customerid,",
+				"          loanamount,",
+				"          interestrate,",
+				"          loanterm",
+				"     )) ~> loanssink",
+				"removeduplicatestranscations sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          transactionid,",
+				"          accountid,",
+				"          transactiondate,",
+				"          transactionamount,",
+				"          transactiontype",
+				"     )) ~> transactionsink"
+			]
+		}
+	}
+}

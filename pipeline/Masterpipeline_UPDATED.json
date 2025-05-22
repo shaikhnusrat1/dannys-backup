@@ -1,0 +1,72 @@
+{
+	"name": "Masterpipeline_UPDATED",
+	"properties": {
+		"activities": [
+			{
+				"name": "BRONZE",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_bronze_",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SILVER",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BRONZE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_silver",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "GOLD",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "SILVER",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_gold",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-05-09T23:48:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

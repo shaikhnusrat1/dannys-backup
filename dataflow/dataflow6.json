@@ -1,0 +1,174 @@
+{
+	"name": "dataflow6",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "target4"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "renametransactions"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "insertauditcolumn"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "updateauditcolumn"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          transactionid as short,",
+				"          accountid as short,",
+				"          transactiondate as date,",
+				"          transactionamount as double,",
+				"          transactiontype as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     fileName: 'part-00000-6f7e0be4-d167-40ba-889d-2f8cde7e271b-c000.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> source1",
+				"source(output(",
+				"          transactionid as integer,",
+				"          hashkey as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'select transactionid,hashkey from transactionsscdtype2 where isActive=1',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> target4",
+				"source1 select(mapColumn(",
+				"          each(match(1==1),",
+				"               concat('src_',$$) = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renametransactions",
+				"renametransactions derive(src_hashkey = crc32(concat(toString(src_transactionid),toString(src_accountid),toString(src_transactiondate),toString(src_transactionamount),src_transactiontype))) ~> derivedColumn1",
+				"derivedColumn1, target4 lookup(src_transactionid == transactionid,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 split(isNull(transactionid),",
+				"     src_transactionid ==transactionid && src_hashkey != hashkey,",
+				"     disjoint: false) ~> split1@(INSERT, UPDATE)",
+				"union1 derive(src_createdby = 'dataflow',",
+				"          src_createddate = currentTimestamp(),",
+				"          src_updatedby = 'dataflow',",
+				"          src_updateddate = currentTimestamp(),",
+				"          src_isActive = 1) ~> insertauditcolumn",
+				"split1@INSERT, split1@UPDATE union(byName: true)~> union1",
+				"split1@UPDATE derive(src_updatedby = 'dataflow-updated',",
+				"          src_updateddate = currentTimestamp(),",
+				"          src_isActive = 0) ~> updateauditcolumn",
+				"updateauditcolumn alterRow(updateIf(1==1)) ~> alterRow1",
+				"insertauditcolumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'transactionsscdtype2',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          transactionid = src_transactionid,",
+				"          accountid = src_accountid,",
+				"          transactiondate = src_transactiondate,",
+				"          transactionamount = src_transactionamount,",
+				"          transactiontype = src_transactiontype,",
+				"          hashkey = src_hashkey,",
+				"          createdby = src_createdby,",
+				"          createddate = src_createddate,",
+				"          updatedby = src_updatedby,",
+				"          updateddate = src_updateddate,",
+				"          isActive = src_isActive",
+				"     )) ~> sink1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'transactionsscdtype2',",
+				"     insertable: false,",
+				"     updateable: true,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     keys:['transactionid','hashkey'],",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          transactionid = src_transactionid,",
+				"          accountid = src_accountid,",
+				"          transactiondate = src_transactiondate,",
+				"          transactionamount = src_transactionamount,",
+				"          transactiontype = src_transactiontype,",
+				"          hashkey = src_hashkey,",
+				"          supdatedby = src_updatedby,",
+				"          updateddate = src_updateddate,",
+				"          isActive = src_isActive",
+				"     )) ~> sink2"
+			]
+		}
+	}
+}

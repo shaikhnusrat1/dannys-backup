@@ -1,0 +1,163 @@
+{
+	"name": "dataflow5",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "target3"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "renameloanpayments"
+				},
+				{
+					"name": "createhashkey"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "insertauditcolumns"
+				},
+				{
+					"name": "updateauditcolumns"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          paymentid as short,",
+				"          loanid as short,",
+				"          paymentdate as date,",
+				"          paymentamount as double",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     fileName: 'part-00000-876a62e7-2bab-4938-ac1e-880fb9eaaf77-c000.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> source1",
+				"source(output(",
+				"          paymentid as integer,",
+				"          hashkey as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'select paymentid,hashkey from loanpaymentsscdtype1',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> target3",
+				"source1 select(mapColumn(",
+				"          each(match(1==1),",
+				"               concat('src_',$$) = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renameloanpayments",
+				"renameloanpayments derive(src_hashkey = crc32(concat(toString(src_paymentid),toString(src_loanid),toString(src_paymentdate),toString(src_paymentamount)))) ~> createhashkey",
+				"createhashkey, target3 lookup(src_paymentid == paymentid,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 split(isNull(paymentid),",
+				"     src_paymentid == paymentid && src_hashkey != hashkey,",
+				"     disjoint: false) ~> split1@(INSERT, UPDATE)",
+				"split1@INSERT derive(src_createdby = 'dataflow',",
+				"          src_createddate = currentTimestamp(),",
+				"          src_updatedby = 'dataflow',",
+				"          src_updateddate = currentTimestamp()) ~> insertauditcolumns",
+				"split1@UPDATE derive(src_updatedby = 'dataflow-updated',",
+				"          src_updateddate = currentTimestamp()) ~> updateauditcolumns",
+				"updateauditcolumns alterRow(updateIf(1==1)) ~> alterRow1",
+				"insertauditcolumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'loanpaymentsscdtype1',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          paymentid = src_paymentid,",
+				"          loanid = src_loanid,",
+				"          paymentdate = src_paymentdate,",
+				"          paymentamount = src_paymentamount,",
+				"          hashkey = src_hashkey,",
+				"          createdby = src_createdby,",
+				"          createddate = src_createddate,",
+				"          updatedby = src_updatedby,",
+				"          updateddate = src_updateddate",
+				"     )) ~> sink1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'loanpaymentsscdtype1',",
+				"     insertable: false,",
+				"     updateable: true,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     keys:['paymentid'],",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          paymentid = src_paymentid,",
+				"          loanid = src_loanid,",
+				"          paymentdate = src_paymentdate,",
+				"          paymentamount = src_paymentamount,",
+				"          hashkey = src_hashkey,",
+				"          updatedby = src_updatedby,",
+				"          updateddate = src_updateddate",
+				"     )) ~> sink2"
+			]
+		}
+	}
+}

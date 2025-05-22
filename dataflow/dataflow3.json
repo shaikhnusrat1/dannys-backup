@@ -1,0 +1,172 @@
+{
+	"name": "dataflow3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "target1"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink3"
+				}
+			],
+			"transformations": [
+				{
+					"name": "renamecustomers"
+				},
+				{
+					"name": "createhashkey"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "insertauditcolumns"
+				},
+				{
+					"name": "updateauditcolumns"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          customer_id as short,",
+				"          first_name as string,",
+				"          last_name as string,",
+				"          address as string,",
+				"          city as string,",
+				"          state as string,",
+				"          zip as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     fileName: 'part-00000-2e8f708d-79ae-4953-9149-5c64ee2437d5-c000.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> source1",
+				"source(output(",
+				"          customerid as integer,",
+				"          hashkey as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'select customerid,hashkey from CUSTOMERSSCDTYPE1',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> target1",
+				"source1 select(mapColumn(",
+				"          each(match(1==1),",
+				"               concat('src_',$$) = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renamecustomers",
+				"renamecustomers derive(src_hashkey = crc32(concat(toString(src_customer_id),src_first_name,src_last_name,src_address,src_city,src_state,src_zip))) ~> createhashkey",
+				"createhashkey, target1 lookup(src_customer_id == customerid,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 split(isNull(customerid),",
+				"     src_customer_id == customerid && src_hashkey != hashkey,",
+				"     disjoint: false) ~> split1@(INSERT, UPDATE)",
+				"split1@INSERT derive(src_createdby = 'dataflow',",
+				"          src_createddate = currentTimestamp(),",
+				"          src_updatedby = 'dataflow',",
+				"          updateddate = currentTimestamp()) ~> insertauditcolumns",
+				"split1@UPDATE derive(src_updatedby = 'dataflow-updated',",
+				"          updateddate = currentTimestamp()) ~> updateauditcolumns",
+				"updateauditcolumns alterRow(updateIf(1==1)) ~> alterRow1",
+				"insertauditcolumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'CUSTOMERSSCDTYPE1',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          customerid = src_customer_id,",
+				"          firstname = src_first_name,",
+				"          lastname = src_last_name,",
+				"          address = src_address,",
+				"          city = src_city,",
+				"          state = src_state,",
+				"          zip = src_zip,",
+				"          hashkey = src_hashkey,",
+				"          createdby = src_createdby,",
+				"          createddate = src_createddate,",
+				"          updatedby = src_updatedby,",
+				"          updateddate",
+				"     )) ~> sink2",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'CUSTOMERSSCDTYPE1',",
+				"     insertable: false,",
+				"     updateable: true,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     keys:['customerid'],",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          customerid = src_customer_id,",
+				"          firstname = src_first_name,",
+				"          lastname = src_last_name,",
+				"          address = src_address,",
+				"          city = src_city,",
+				"          state = src_state,",
+				"          zip = src_zip,",
+				"          hashkey = src_hashkey,",
+				"          updatedby = src_updatedby,",
+				"          updateddate",
+				"     )) ~> sink3"
+			]
+		}
+	}
+}

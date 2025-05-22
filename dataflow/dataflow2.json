@@ -1,0 +1,163 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStoragesource",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "target"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "AzureSqlDatabase1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "rename"
+				},
+				{
+					"name": "createhashkey"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "insertauditcolumn"
+				},
+				{
+					"name": "updateauditcolumn"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          accountid as short,",
+				"          customerid as short,",
+				"          accounttype as string,",
+				"          balance as double",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'container11',",
+				"     folderPath: 'PROJECT1/SILVER',",
+				"     fileName: 'part-00000-ed8b4ced-5941-49f4-b7c6-1ebdd2bb62e5-c000.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> source1",
+				"source(output(",
+				"          accountid as integer,",
+				"          hashkey as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'SELECT accountid,hashkey from dbo.ACCOUNTSSCDTYPE1',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> target",
+				"source1 select(mapColumn(",
+				"          each(match(1==1),",
+				"               concat('src_',$$) = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rename",
+				"rename derive(src_hashkey = crc32(concat(toString(src_accountid),toString(src_customerid),src_accounttype,toString(src_balance)))) ~> createhashkey",
+				"createhashkey, target lookup(src_accountid == accountid,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 split(isNull(accountid),",
+				"     src_accountid==accountid && src_hashkey != hashkey,",
+				"     disjoint: false) ~> split1@(insert, update)",
+				"split1@insert derive(src_createdby = 'dataflow',",
+				"          src_createddate = currentTimestamp(),",
+				"          src_updatedby = 'dataflow',",
+				"          src_updateddate = currentTimestamp()) ~> insertauditcolumn",
+				"split1@update derive(src_updatedby = 'dataflow-updated',",
+				"          src_updateddate = currentTimestamp()) ~> updateauditcolumn",
+				"updateauditcolumn alterRow(updateIf(1==1)) ~> alterRow1",
+				"insertauditcolumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'ACCOUNTSSCDTYPE1',",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          accountid = src_accountid,",
+				"          customerid = src_customerid,",
+				"          accounttype = src_accounttype,",
+				"          balance = src_balance,",
+				"          hashkey = src_hashkey,",
+				"          createdby = src_createdby,",
+				"          createddate = src_createddate,",
+				"          updatedby = src_updatedby,",
+				"          updateddate = src_updateddate",
+				"     )) ~> sink1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table',",
+				"     store: 'sqlserver',",
+				"     schemaName: 'dbo',",
+				"     tableName: 'ACCOUNTSSCDTYPE1',",
+				"     insertable: false,",
+				"     updateable: true,",
+				"     deletable: false,",
+				"     upsertable: false,",
+				"     keys:['accountid'],",
+				"     stagingSchemaName: '',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          accountid = src_accountid,",
+				"          customerid = src_customerid,",
+				"          accounttype = src_accounttype,",
+				"          balance = src_balance,",
+				"          hashkey = src_hashkey,",
+				"          updatedby = src_updatedby,",
+				"          updateddate = src_updateddate",
+				"     )) ~> sink2"
+			]
+		}
+	}
+}
