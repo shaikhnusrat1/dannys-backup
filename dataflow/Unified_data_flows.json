@@ -1,0 +1,188 @@
+{
+	"name": "Unified_data_flows",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "agents_adls",
+						"type": "DatasetReference"
+					},
+					"name": "AgentCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_Customers",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_CustomerServiceInteractions",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerServiceInteractionsCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_LoyaltyAccounts",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyAccountsCsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "agentsTableSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "CustomersAzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "CustomerServiceInteractionsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerServiceInteractionsAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "LoyaltyAccountsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyAccountsAzureSqlDb"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "filter3"
+				},
+				{
+					"name": "filter4"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AgentID as string,",
+				"          Name as string,",
+				"          Department as string,",
+				"          Shift as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> AgentCsv",
+				"source(output(",
+				"          CustomerID as string,",
+				"          Name as string,",
+				"          Email as string,",
+				"          Address as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustomersCsv",
+				"source(output(",
+				"          InteractionID as string,",
+				"          CustomerID as string,",
+				"          DateTime as string,",
+				"          AgentID as string,",
+				"          IssueType as string,",
+				"          ResolutionStatus as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustomerServiceInteractionsCsv",
+				"source(output(",
+				"          LoyaltyID as string,",
+				"          CustomerID as string,",
+				"          PointsEarned as string,",
+				"          TierLevel as string,",
+				"          JoinDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LoyaltyAccountsCsv",
+				"AgentCsv filter(!isNull(AgentID) && !isNull(Name) && !isNull(Department) && !isNull(Shift)) ~> filter1",
+				"CustomersCsv filter(!isNull(CustomerID) && !isNull(Name) && !isNull(Email) && !isNull(Address)) ~> filter2",
+				"CustomerServiceInteractionsCsv filter(!isNull(InteractionID) && !isNull(CustomerID) && !isNull(DateTime) && !isNull(AgentID) && !isNull(IssueType) && !isNull(ResolutionStatus)) ~> filter3",
+				"LoyaltyAccountsCsv filter(!isNull(LoyaltyID) && !isNull(CustomerID) && !isNull(PointsEarned) && !isNull(TierLevel) && !isNull(JoinDate)) ~> filter4",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AgentID as integer,",
+				"          Name as string,",
+				"          Department as string,",
+				"          Shift as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> agentsTableSqlDb",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CustomersAzureSqlDb",
+				"filter3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          InteractionID as integer,",
+				"          CustomerID as integer,",
+				"          DateTime as timestamp,",
+				"          AgentID as integer,",
+				"          IssueType as string,",
+				"          ResolutionStatus as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CustomerServiceInteractionsAzureSqlDb",
+				"filter4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LoyaltyID as integer,",
+				"          CustomerID as integer,",
+				"          PointsEarned as integer,",
+				"          TierLevel as string,",
+				"          JoinDate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> LoyaltyAccountsAzureSqlDb"
+			]
+		}
+	}
+}

@@ -1,8 +1,8 @@
 {
-	"name": "csv1",
+	"name": "adls_Customers",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "wsp-ncpl-ash-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "PROJECT1/LOCAL",
+				"fileName": "Customers.csv",
+				"folderPath": "PROJECT3/BRONZE",
 				"fileSystem": "container11"
 			},
 			"columnDelimiter": ",",
@@ -20,19 +21,19 @@
 		},
 		"schema": [
 			{
-				"name": "account_id",
+				"name": "CustomerID",
 				"type": "String"
 			},
 			{
-				"name": "customer_id",
+				"name": "Name",
 				"type": "String"
 			},
 			{
-				"name": "account_type",
+				"name": "Email",
 				"type": "String"
 			},
 			{
-				"name": "balance",
+				"name": "Address",
 				"type": "String"
 			}
 		]

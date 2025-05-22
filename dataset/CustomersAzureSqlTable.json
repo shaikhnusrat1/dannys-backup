@@ -1,0 +1,17 @@
+{
+	"name": "CustomersAzureSqlTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "Staging",
+			"table": "Customers"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

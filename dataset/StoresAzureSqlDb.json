@@ -1,0 +1,35 @@
+{
+	"name": "StoresAzureSqlDb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "StoreID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Location",
+				"type": "varchar"
+			},
+			{
+				"name": "Manager",
+				"type": "varchar"
+			},
+			{
+				"name": "OpenHours",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Staging",
+			"table": "Stores"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

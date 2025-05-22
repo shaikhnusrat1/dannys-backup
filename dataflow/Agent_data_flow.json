@@ -1,0 +1,413 @@
+{
+	"name": "Agent_data_flow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "adls_Customers",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "product_adls",
+						"type": "DatasetReference"
+					},
+					"name": "ProductCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adlsOnlineTransactions",
+						"type": "DatasetReference"
+					},
+					"name": "OnlineTransactionsCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_stores",
+						"type": "DatasetReference"
+					},
+					"name": "StoresCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_InStoreTransactions",
+						"type": "DatasetReference"
+					},
+					"name": "InStoreTransactionsCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "agents_adls",
+						"type": "DatasetReference"
+					},
+					"name": "AgentCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_CustomerServiceInteractions",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerServiceInteractionsCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_LoyaltyAccounts",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyAccountsCsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "adls_LoyaltyTransactions",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyTransactionsCsv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CustomersAzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "CustomersAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "ProductAzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "productTableSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "OnlineTransactionsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "onlineTransactionsSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "StoresAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "StoresAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "InStoreTransactions_AzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "InStoreTransactionsAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "agentsTableSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "CustomerServiceInteractionsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerServiceInteractionsAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "LoyaltyAccountsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyAccountsAzureSqlDb"
+				},
+				{
+					"dataset": {
+						"referenceName": "LoyaltyTransactionsAzureSqlDb",
+						"type": "DatasetReference"
+					},
+					"name": "LoyaltyTransactionsAzureSqlDb"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "filter3"
+				},
+				{
+					"name": "filter4"
+				},
+				{
+					"name": "filter5"
+				},
+				{
+					"name": "filter6"
+				},
+				{
+					"name": "filter7"
+				},
+				{
+					"name": "filter8"
+				},
+				{
+					"name": "filter9"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as string,",
+				"          Name as string,",
+				"          Email as string,",
+				"          Address as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustomersCsv",
+				"source(output(",
+				"          ProductID as string,",
+				"          Name as string,",
+				"          Category as string,",
+				"          Price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ProductCsv",
+				"source(output(",
+				"          OrderID as string,",
+				"          CustomerID as string,",
+				"          ProductID as string,",
+				"          DateTime as string,",
+				"          PaymentMethod as string,",
+				"          Amount as string,",
+				"          Status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OnlineTransactionsCsv",
+				"source(output(",
+				"          StoreID as string,",
+				"          Location as string,",
+				"          Manager as string,",
+				"          OpenHours as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> StoresCsv",
+				"source(output(",
+				"          TransactionID as string,",
+				"          CustomerID as string,",
+				"          StoreID as string,",
+				"          DateTime as string,",
+				"          Amount as string,",
+				"          PaymentMethod as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> InStoreTransactionsCsv",
+				"source(output(",
+				"          AgentID as string,",
+				"          Name as string,",
+				"          Department as string,",
+				"          Shift as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> AgentCsv",
+				"source(output(",
+				"          InteractionID as string,",
+				"          CustomerID as string,",
+				"          DateTime as string,",
+				"          AgentID as string,",
+				"          IssueType as string,",
+				"          ResolutionStatus as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustomerServiceInteractionsCsv",
+				"source(output(",
+				"          LoyaltyID as string,",
+				"          CustomerID as string,",
+				"          PointsEarned as string,",
+				"          TierLevel as string,",
+				"          JoinDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LoyaltyAccountsCsv",
+				"source(output(",
+				"          LoyaltyID as string,",
+				"          DateTime as string,",
+				"          PointsChange as string,",
+				"          Reason as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LoyaltyTransactionsCsv",
+				"CustomersCsv filter(!isNull(CustomerID) && !isNull(Name) && !isNull(Email) && !isNull(Address)) ~> filter1",
+				"ProductCsv filter(!isNull(ProductID) && !isNull(Name) && !isNull(Category) && !isNull(Price)) ~> filter2",
+				"OnlineTransactionsCsv filter(!isNull(OrderID) && !isNull(CustomerID) && !isNull(ProductID) && !isNull(DateTime) && !isNull(PaymentMethod) && !isNull(Amount) && !isNull(Status)) ~> filter3",
+				"StoresCsv filter(!isNull(StoreID) && !isNull(Location) && !isNull(Manager) && !isNull(OpenHours)) ~> filter4",
+				"InStoreTransactionsCsv filter(!isNull(TransactionID) && !isNull(CustomerID) && !isNull(StoreID) && !isNull(DateTime) && !isNull(Amount) && !isNull(PaymentMethod)) ~> filter5",
+				"AgentCsv filter(!isNull(AgentID) && !isNull(Name) && !isNull(Department) && !isNull(Shift)) ~> filter6",
+				"CustomerServiceInteractionsCsv filter(!isNull(InteractionID) && !isNull(CustomerID) && !isNull(DateTime) && !isNull(AgentID) && !isNull(IssueType) && !isNull(ResolutionStatus)) ~> filter7",
+				"LoyaltyAccountsCsv filter(!isNull(LoyaltyID) && !isNull(CustomerID) && !isNull(PointsEarned) && !isNull(TierLevel) && !isNull(JoinDate)) ~> filter8",
+				"LoyaltyTransactionsCsv filter(!isNull(LoyaltyID) && !isNull(DateTime) && !isNull(PointsChange) && !isNull(Reason)) ~> filter9",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CustomersAzureSqlDb",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          Category as string,",
+				"          Price as decimal(10,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> productTableSqlDb",
+				"filter3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          OrderID as integer,",
+				"          CustomerID as integer,",
+				"          ProductID as integer,",
+				"          DateTime as timestamp,",
+				"          PaymentMethod as string,",
+				"          Amount as decimal(10,2),",
+				"          Status as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> onlineTransactionsSqlDb",
+				"filter4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          StoreID as integer,",
+				"          Location as string,",
+				"          Manager as string,",
+				"          OpenHours as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> StoresAzureSqlDb",
+				"filter5 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TransactionID as integer,",
+				"          CustomerID as integer,",
+				"          StoreID as integer,",
+				"          DateTime as timestamp,",
+				"          Amount as decimal(10,2),",
+				"          PaymentMethod as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> InStoreTransactionsAzureSqlDb",
+				"filter6 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AgentID as integer,",
+				"          Name as string,",
+				"          Department as string,",
+				"          Shift as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> agentsTableSqlDb",
+				"filter7 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          InteractionID as integer,",
+				"          CustomerID as integer,",
+				"          DateTime as timestamp,",
+				"          AgentID as integer,",
+				"          IssueType as string,",
+				"          ResolutionStatus as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> CustomerServiceInteractionsAzureSqlDb",
+				"filter8 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LoyaltyID as integer,",
+				"          CustomerID as integer,",
+				"          PointsEarned as integer,",
+				"          TierLevel as string,",
+				"          JoinDate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> LoyaltyAccountsAzureSqlDb",
+				"filter9 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LoyaltyID as integer,",
+				"          DateTime as timestamp,",
+				"          PointsChange as integer,",
+				"          Reason as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> LoyaltyTransactionsAzureSqlDb"
+			]
+		}
+	}
+}

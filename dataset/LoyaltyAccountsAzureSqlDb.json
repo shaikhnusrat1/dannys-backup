@@ -1,0 +1,41 @@
+{
+	"name": "LoyaltyAccountsAzureSqlDb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "LoyaltyID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PointsEarned",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TierLevel",
+				"type": "varchar"
+			},
+			{
+				"name": "JoinDate",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "Staging",
+			"table": "LoyaltyAccounts"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

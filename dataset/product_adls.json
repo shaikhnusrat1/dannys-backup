@@ -1,8 +1,8 @@
 {
-	"name": "csv1",
+	"name": "product_adls",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "wsp-ncpl-ash-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "PROJECT1/LOCAL",
+				"fileName": "Products.csv",
+				"folderPath": "PROJECT3/BRONZE",
 				"fileSystem": "container11"
 			},
 			"columnDelimiter": ",",
@@ -20,19 +21,19 @@
 		},
 		"schema": [
 			{
-				"name": "account_id",
+				"name": "ProductID",
 				"type": "String"
 			},
 			{
-				"name": "customer_id",
+				"name": "Name",
 				"type": "String"
 			},
 			{
-				"name": "account_type",
+				"name": "Category",
 				"type": "String"
 			},
 			{
-				"name": "balance",
+				"name": "Price",
 				"type": "String"
 			}
 		]

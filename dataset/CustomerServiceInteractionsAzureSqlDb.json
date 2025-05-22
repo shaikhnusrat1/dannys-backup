@@ -1,0 +1,47 @@
+{
+	"name": "CustomerServiceInteractionsAzureSqlDb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "InteractionID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "AgentID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IssueType",
+				"type": "varchar"
+			},
+			{
+				"name": "ResolutionStatus",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Staging",
+			"table": "CustomerServiceInteractions"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

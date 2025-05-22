@@ -6,35 +6,35 @@
 			"sources": [
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "accounts"
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "customers"
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "loanpayments"
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "loans"
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "transactions"
@@ -43,56 +43,56 @@
 			"sinks": [
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "accountssink",
 					"rejectedDataLinkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					}
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "customerssink",
 					"rejectedDataLinkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					}
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "loanpaymentssink",
 					"rejectedDataLinkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					}
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "loanssink",
 					"rejectedDataLinkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					}
 				},
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "transactionsink",
 					"rejectedDataLinkedService": {
-						"referenceName": "AzureDataLakeStoragesink",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					}
 				}

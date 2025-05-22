@@ -1,8 +1,8 @@
 {
-	"name": "csv1",
+	"name": "adls_CustomerServiceInteractions",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "wsp-ncpl-ash-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "PROJECT1/LOCAL",
+				"fileName": "CustomerServiceInteractions.csv",
+				"folderPath": "PROJECT3/BRONZE",
 				"fileSystem": "container11"
 			},
 			"columnDelimiter": ",",
@@ -20,19 +21,27 @@
 		},
 		"schema": [
 			{
-				"name": "account_id",
+				"name": "InteractionID",
 				"type": "String"
 			},
 			{
-				"name": "customer_id",
+				"name": "CustomerID",
 				"type": "String"
 			},
 			{
-				"name": "account_type",
+				"name": "DateTime",
 				"type": "String"
 			},
 			{
-				"name": "balance",
+				"name": "AgentID",
+				"type": "String"
+			},
+			{
+				"name": "IssueType",
+				"type": "String"
+			},
+			{
+				"name": "ResolutionStatus",
 				"type": "String"
 			}
 		]

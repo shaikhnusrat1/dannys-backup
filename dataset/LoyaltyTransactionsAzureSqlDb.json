@@ -1,0 +1,38 @@
+{
+	"name": "LoyaltyTransactionsAzureSqlDb",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "LoyaltyID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PointsChange",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Reason",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Staging",
+			"table": "LoyaltyTransactions"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

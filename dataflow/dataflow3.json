@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"linkedService": {
-						"referenceName": "AzureDataLakeStoragesource",
+						"referenceName": "AzureDataLakeStorage1",
 						"type": "LinkedServiceReference"
 					},
 					"name": "source1"

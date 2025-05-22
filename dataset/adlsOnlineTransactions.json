@@ -1,8 +1,8 @@
 {
-	"name": "csv1",
+	"name": "adlsOnlineTransactions",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage1",
+			"referenceName": "wsp-ncpl-ash-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "PROJECT1/LOCAL",
+				"fileName": "OnlineTransactions.csv",
+				"folderPath": "PROJECT3/BRONZE",
 				"fileSystem": "container11"
 			},
 			"columnDelimiter": ",",
@@ -20,19 +21,31 @@
 		},
 		"schema": [
 			{
-				"name": "account_id",
+				"name": "OrderID",
 				"type": "String"
 			},
 			{
-				"name": "customer_id",
+				"name": "CustomerID",
 				"type": "String"
 			},
 			{
-				"name": "account_type",
+				"name": "ProductID",
 				"type": "String"
 			},
 			{
-				"name": "balance",
+				"name": "DateTime",
+				"type": "String"
+			},
+			{
+				"name": "PaymentMethod",
+				"type": "String"
+			},
+			{
+				"name": "Amount",
+				"type": "String"
+			},
+			{
+				"name": "Status",
 				"type": "String"
 			}
 		]

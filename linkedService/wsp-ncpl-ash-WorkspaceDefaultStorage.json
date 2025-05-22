@@ -1,6 +1,6 @@
 {
 	"name": "wsp-ncpl-ash-WorkspaceDefaultStorage",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"typeProperties": {
 			"url": "https://adlsgen2ash.dfs.core.windows.net"
